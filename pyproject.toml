@@ -1,7 +1,7 @@
 [project]
-name = "time-design-backend"
+name = "timedesign-backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "timedesign-backend application"
 authors = [
     { name = "Shota Onishi" }
 ]
@@ -16,7 +16,9 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = []
+dev-dependencies = [
+    "pytest>=8.1.1",
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -24,33 +26,6 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["src/time_design_backend"]
 
-# Lint/Formatter非依存のルール
 [tool.ruff]
-# 除外したいファイル
-# excludeを設定するとデフォルトで設定されている.venv配下などの設定が上書きされるため要注意
-extend-exclude = ["src/something.py"]
-# 行文字数
-line-length = 88
-# インデント幅
+line-length = 80
 indent-width = 4
-
-# Linterのルール
-[tool.ruff.lint]
-# Lintルール
-# https://docs.astral.sh/ruff/rules/　に記載されているルールのうち、Codeが前方一致するルールが適用されます
-select = ["E", "F", "I", "PLR"]
-# 除外するLintルール
-# selectで選択したルールから除外したいものを指定できます
-ignore = ["PLR2004"]
-# auto fixの対象にするルール
-fixable = ["ALL"]
-# auto fixから除外するルール
-# editor.formatOnSaveを使う際に自動でFixされると困るものを指定できます
-unfixable = ["F401"]
-
-# Formatterのルール
-[tool.ruff.format]
-# 文字列をダブルクォートに統一
-quote-style = "double"
-# インデントをタブ文字(\t)からスペースに変換
-indent-style = "space"
