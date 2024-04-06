@@ -2,11 +2,8 @@
 name = "timedesign-backend"
 version = "0.1.0"
 description = "timedesign-backend application"
-authors = [
-    { name = "Shota Onishi" }
-]
-dependencies = [
-]
+authors = [{ name = "Shota Onishi" }]
+dependencies = ["aws-cdk-lib>=2.135.0"]
 readme = "README.md"
 requires-python = ">= 3.8"
 
@@ -16,9 +13,7 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = [
-    "pytest>=8.1.1",
-]
+dev-dependencies = ["pytest>=8.1.1"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -29,3 +24,27 @@ packages = ["src/time_design_backend"]
 [tool.ruff]
 line-length = 80
 indent-width = 4
+
+select = [
+    "F", # pyflakes
+    "E", # pycodestyle
+    "W", # pycodestyle warnings
+    "I", # isort
+    "D", # pydocstyle
+]
+
+extend-ignore = [
+    "D105", # undocumented-magic-method
+    "D107", # undocumented-public-init
+    "D205", # blank-line-after-summary
+    "D415", # ends-in-punctuation
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google" # docstringをgoogle styleにする
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+disallow_untyped_decorators = false
+disallow_untyped_calls = false
