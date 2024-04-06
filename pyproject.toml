@@ -24,7 +24,6 @@ packages = ["src/time_design_backend"]
 [tool.ruff]
 line-length = 80
 indent-width = 4
-
 select = [
     "F", # pyflakes
     "E", # pycodestyle
@@ -32,12 +31,13 @@ select = [
     "I", # isort
     "D", # pydocstyle
 ]
-
 extend-ignore = [
     "D105", # undocumented-magic-method
     "D107", # undocumented-public-init
     "D205", # blank-line-after-summary
     "D415", # ends-in-punctuation
+    # "D100", # 
+    # "I001", # 
 ]
 
 [tool.ruff.lint.pydocstyle]
