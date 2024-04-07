@@ -3,7 +3,13 @@ name = "timedesign-backend"
 version = "0.1.0"
 description = "timedesign-backend application"
 authors = [{ name = "Shota Onishi" }]
-dependencies = ["aws-cdk-lib>=2.135.0"]
+dependencies = [
+    "aws-cdk-lib>=2.135.0",
+    "aws-cdk.aws-lambda-python-alpha>=2.136.0a0",
+    "aws-lambda-powertools>=2.36.0",
+    "constructs>=10.0.0,<11.0.0",
+    "pydantic>=2.6.4",
+]
 readme = "README.md"
 requires-python = ">= 3.8"
 
@@ -32,11 +38,12 @@ select = [
     "D", # pydocstyle
 ]
 extend-ignore = [
+    "D100", # undocumented-public-module
+    "D101", # undocumented-public-class
     "D105", # undocumented-magic-method
     "D107", # undocumented-public-init
     "D205", # blank-line-after-summary
     "D415", # ends-in-punctuation
-    # "D100", # 
     # "I001", # 
 ]
 

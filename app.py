@@ -1,7 +1,8 @@
 import aws_cdk as cdk
-from cdk.cdk_stack import CdkStack
+
+from infrastructure.todo_stack import TodoAppStack
 
 app = cdk.App()
-CdkStack(app, "CdkStack")
+TodoAppStack(app, "TodoStack")
 
 app.synth()

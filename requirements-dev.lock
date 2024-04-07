@@ -8,6 +8,8 @@
 #   with-sources: false
 
 -e file:.
+annotated-types==0.6.0
+    # via pydantic
 attrs==23.2.0
     # via cattrs
     # via jsii
@@ -17,12 +19,19 @@ aws-cdk-asset-kubectl-v20==2.1.2
     # via aws-cdk-lib
 aws-cdk-asset-node-proxy-agent-v6==2.0.3
     # via aws-cdk-lib
-aws-cdk-lib==2.135.0
+aws-cdk-aws-lambda-python-alpha==2.136.0a0
+    # via timedesign-backend
+aws-cdk-lib==2.136.0
+    # via aws-cdk-aws-lambda-python-alpha
+    # via timedesign-backend
+aws-lambda-powertools==2.36.0
     # via timedesign-backend
 cattrs==23.2.3
     # via jsii
 constructs==10.3.0
+    # via aws-cdk-aws-lambda-python-alpha
     # via aws-cdk-lib
+    # via timedesign-backend
 importlib-resources==6.4.0
     # via jsii
 iniconfig==2.0.0
@@ -31,6 +40,7 @@ jsii==1.96.0
     # via aws-cdk-asset-awscli-v1
     # via aws-cdk-asset-kubectl-v20
     # via aws-cdk-asset-node-proxy-agent-v6
+    # via aws-cdk-aws-lambda-python-alpha
     # via aws-cdk-lib
     # via constructs
 packaging==24.0
@@ -41,9 +51,14 @@ publication==0.0.3
     # via aws-cdk-asset-awscli-v1
     # via aws-cdk-asset-kubectl-v20
     # via aws-cdk-asset-node-proxy-agent-v6
+    # via aws-cdk-aws-lambda-python-alpha
     # via aws-cdk-lib
     # via constructs
     # via jsii
+pydantic==2.6.4
+    # via timedesign-backend
+pydantic-core==2.16.3
+    # via pydantic
 pytest==8.1.1
 python-dateutil==2.9.0.post0
     # via jsii
@@ -53,8 +68,12 @@ typeguard==2.13.3
     # via aws-cdk-asset-awscli-v1
     # via aws-cdk-asset-kubectl-v20
     # via aws-cdk-asset-node-proxy-agent-v6
+    # via aws-cdk-aws-lambda-python-alpha
     # via aws-cdk-lib
     # via constructs
     # via jsii
 typing-extensions==4.11.0
+    # via aws-lambda-powertools
     # via jsii
+    # via pydantic
+    # via pydantic-core
