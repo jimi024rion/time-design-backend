@@ -4,6 +4,7 @@ from aws_cdk import aws_apigatewayv2 as apigwv2
 from aws_cdk import aws_apigatewayv2_integrations as apigwv2_integrations
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_lambda_python_alpha as lambda_alpha
+from aws_cdk import aws_logs as logs
 from constructs import Construct
 
 
@@ -26,7 +27,12 @@ class TodoApi(Construct):
         )
 
         # CloudWatchLogs for Lambda
-        self.todos_fn.log_group
+        logs.LogGroup(
+            self,
+            "TodoItemLogGroup",
+            log_group_name=f"/aws/lambda/{self.todos_fn.function_name}",
+            retention=logs.RetentionDays.TWO_WEEKS,
+        )
 
         # API Gateway
         todos_integrations = apigwv2_integrations.HttpLambdaIntegration(
