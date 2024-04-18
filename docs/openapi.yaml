@@ -1,0 +1,61 @@
+openapi: 3.0.3
+
+info:
+  title: API
+  version: 1.0.0
+  contact:
+    name: Shota Onishi
+
+servers:
+  - url: https://41cb6l9dq5.execute-api.ap-northeast-1.amazonaws.com
+
+tags:
+  - name: todo
+    description: ToDo操作
+
+paths:
+  /todos:
+    get:
+      summary: 一覧取得
+      description: ユーザーのToDoリストを取得する
+      tags:
+        - todo
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: 
+        -  todo
+      summary: 新規作成
+      description: 新規作成
+      responses: 
+        "200":
+          description: OK
+  /todos/{todo_id}:
+    put:
+      tags: 
+        -  todo
+      summary: ステータス更新
+      description: ステータス更新
+      responses: 
+        "200":
+          description: OK
+    patch:
+      tags: 
+        -  todo
+      summary: 編集
+      description: 編集
+      responses: 
+        "200":
+          description: OK
+    delete:
+      tags: 
+        -  todo
+      summary: 削除
+      description: 削除
+      responses: 
+        "200":
+          description: OK
+    
+
+
