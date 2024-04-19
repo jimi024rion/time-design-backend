@@ -1,13 +1,38 @@
-openapi: 3.0.3
+openapi: 3.1.1
 
 info:
-  title: API
-  version: 1.0.0
+  title: ToDo API
+  summary: 練習用のAPI仕様書
+  description: |
+    API仕様書の練習用に作成した文書です。\
+    なので、本仕様書で定義するエンドポイントや連絡先はでたらめです。
+  termsOfService: http://example.com/teams
   contact:
-    name: Shota Onishi
+    name: ToDo support
+    url: http://www.example.com/support
+    email: todo@example.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 
 servers:
-  - url: https://41cb6l9dq5.execute-api.ap-northeast-1.amazonaws.com
+  - url: "http://localhost:{port}"
+    description: local
+    variables:
+      port:
+        enum: 
+          -  "8080"
+          -  "3000"
+        default: "3000"
+        description: Port number
+  # - url: https://41cb6l9dq5.execute-api.ap-northeast-1.amazonaws.com
+  #   description: dev
+
+security:
+  - CognitoAuth: []
 
 tags:
   - name: todo
@@ -16,46 +41,173 @@ tags:
 paths:
   /todos:
     get:
-      summary: 一覧取得
-      description: ユーザーのToDoリストを取得する
+      summary: ToDo一覧取得
+      description: 指定したユーザーのToDoリストを取得する
+      operationId: GetTodoList
+      parameters:
+        - $ref: "#/components/parameters/userId"
       tags:
         - todo
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/GetToDoListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     post:
-      tags: 
-        -  todo
-      summary: 新規作成
-      description: 新規作成
-      responses: 
+      tags:
+        - todo
+      summary: ToDo新規作成
+      description: ToDoを新規作成する
+      operationId: CreateTodo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateToDoRequest"
+      responses:
         "200":
           description: OK
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /todos/{todo_id}:
     put:
-      tags: 
-        -  todo
-      summary: ステータス更新
+      tags:
+        - todo
+      summary: ToDoステータス更新
       description: ステータス更新
-      responses: 
+      responses:
         "200":
           description: OK
     patch:
-      tags: 
-        -  todo
-      summary: 編集
+      tags:
+        - todo
+      summary: ToDo編集
       description: 編集
-      responses: 
+      responses:
         "200":
           description: OK
     delete:
-      tags: 
-        -  todo
-      summary: 削除
+      tags:
+        - todo
+      summary: ToDo削除
       description: 削除
-      responses: 
+      responses:
         "200":
           description: OK
-    
+
+components:
+  parameters:
+    userId:
+      name: user_id
+      in: query
+      required: true
+      schema: 
+        $ref: "#/components/schemas/UserId"
+
+  schemas:
+    # 属性
+    ToDoId:
+      type: string
+      format: uuid
+      description: ToDo ID
+    UserId:
+      type: string
+      format: uuid
+      description: ユーザーID
+    Title:
+      type: string
+      description: ToDoのタイトル
+      example: "宿題"
+    Done:
+      type: boolean
+      description: ToDoが完了してるかどうか
+      example: false
+
+    # モデル
+    ToDoItem: 
+      type: object
+      description: ToDoアイテム
+      required: 
+        - todo_id
+        - user_id
+        - title
+        - done
+      properties:
+        todo_id:
+          $ref: "#/components/schemas/ToDoId"
+        user_id:
+          $ref: "#/components/schemas/UserId"
+        title:
+          $ref: "#/components/schemas/Title"
+        done:
+          $ref: "#/components/schemas/Done"
 
 
+    GetToDoListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/ToDoItem"
+    CreateToDoRequest:
+      type: object
+      description: ToDo作成リクエスト
+      required: 
+        - user_id
+        - title
+      properties:
+        user_id:
+          $ref: "#/components/schemas/UserId"
+        title:
+          $ref: "#/components/schemas/Title"
+
+
+
+  responses:
+    BadRequest: # 400
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Bad Request"
+    Unauthorized: # 401
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Unauthorized"
+    InternalServerError: # 500
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal Server Error"
+
+  securitySchemes:
+    CognitoAuth:
+      type: apiKey
+      name: Cognito-Auth-Header
+      in: header
