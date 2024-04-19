@@ -23,9 +23,9 @@ servers:
     description: local
     variables:
       port:
-        enum: 
-          -  "8080"
-          -  "3000"
+        enum:
+          - "8080"
+          - "3000"
         default: "3000"
         description: Port number
   # - url: https://41cb6l9dq5.execute-api.ap-northeast-1.amazonaws.com
@@ -36,37 +36,39 @@ security:
 
 tags:
   - name: todo
-    description: ToDo操作
+    description: ToDoの処理に関連するAPI
 
 paths:
   /todos:
     get:
       summary: ToDo一覧取得
-      description: 指定したユーザーのToDoリストを取得する
-      operationId: GetTodoList
+      description: 指定したユーザーのToDoリストを取得する。
+      operationId: getTodoList
       parameters:
         - $ref: "#/components/parameters/userId"
       tags:
         - todo
       responses:
         "200":
-          description: OK
+          description: Success
           content:
             application/json:
-              schema: 
+              schema:
                 $ref: "#/components/schemas/GetToDoListResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
     post:
       tags:
         - todo
       summary: ToDo新規作成
-      description: ToDoを新規作成する
-      operationId: CreateTodo
+      description: 新しいToDoアイテムを作成しデータベースに追加する。
+      operationId: createTodo
       requestBody:
         required: true
         content:
@@ -74,8 +76,12 @@ paths:
             schema:
               $ref: "#/components/schemas/CreateToDoRequest"
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateToDoResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -83,30 +89,79 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
   /todos/{todo_id}:
-    put:
-      tags:
-        - todo
-      summary: ToDoステータス更新
-      description: ステータス更新
-      responses:
-        "200":
-          description: OK
     patch:
       tags:
         - todo
-      summary: ToDo編集
-      description: 編集
+      summary: ToDo更新
+      description: 指定されたToDoの詳細情報を更新する。
+      operationId: updateTodo
+      parameters:
+        - $ref: "#/components/parameters/todoId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateToDoRequest"
       responses:
         "200":
-          description: OK
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateToDoResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     delete:
       tags:
         - todo
       summary: ToDo削除
-      description: 削除
+      description: 指定されたToDoをデータベースから削除する。
+      operationId: deleteTodo
+      parameters:
+        - $ref: "#/components/parameters/todoId"
       responses:
-        "200":
-          description: OK
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      tags:
+        - todo
+      summary: ToDoステータス更新
+      description: 指定されたToDoの完了ステータスを更新する。
+      operationId: updateTodoStatus
+      parameters:
+        - $ref: "#/components/parameters/todoId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateToDoStatusRequest"
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
 components:
   parameters:
@@ -114,8 +169,14 @@ components:
       name: user_id
       in: query
       required: true
-      schema: 
+      schema:
         $ref: "#/components/schemas/UserId"
+    todoId:
+      name: todo_id
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/ToDoId"
 
   schemas:
     # 属性
@@ -137,25 +198,22 @@ components:
       example: false
 
     # モデル
-    ToDoItem: 
+    ToDoItem:
       type: object
       description: ToDoアイテム
-      required: 
+      required:
         - todo_id
-        - user_id
         - title
         - done
       properties:
         todo_id:
           $ref: "#/components/schemas/ToDoId"
-        user_id:
-          $ref: "#/components/schemas/UserId"
         title:
           $ref: "#/components/schemas/Title"
         done:
           $ref: "#/components/schemas/Done"
 
-
+    # リクエスト/レスポンス
     GetToDoListResponse:
       type: array
       items:
@@ -163,18 +221,43 @@ components:
     CreateToDoRequest:
       type: object
       description: ToDo作成リクエスト
-      required: 
-        - user_id
+      required:
         - title
       properties:
-        user_id:
-          $ref: "#/components/schemas/UserId"
         title:
           $ref: "#/components/schemas/Title"
-
-
+    CreateToDoResponse:
+      $ref: "#/components/schemas/ToDoItem"
+    UpdateToDoRequest:
+      type: object
+      description: ToDo作成リクエスト
+      required:
+        - title
+      properties:
+        title:
+          $ref: "#/components/schemas/Title"
+    UpdateToDoResponse:
+      $ref: "#/components/schemas/ToDoItem"
+    UpdateToDoStatusRequest:
+      type: object
+      description: ToDoステータス更新リクエスト
+      required:
+        - done
+      properties:
+        done:
+          $ref: "#/components/schemas/Done"
 
   responses:
+    NoContent: # 204
+      description: No Content
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "No Content"
     BadRequest: # 400
       description: Bad Request
       content:
@@ -195,6 +278,16 @@ components:
               message:
                 type: string
                 example: "Unauthorized"
+    NotFound: # 404
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Not Found"
     InternalServerError: # 500
       description: Internal Server Error
       content:
